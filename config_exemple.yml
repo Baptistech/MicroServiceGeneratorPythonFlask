@@ -1,0 +1,205 @@
+microservicename: micro_service_exemple
+
+custom_exceptions:
+  type: directory
+  file:
+    init:
+      extention: py
+    Custom_Exceptions:
+      extention: py
+
+settings:
+  type: file
+  extention: py
+  contenu:
+    database_uri: 'mysql+pymysql://root:password@newsdatabase/news'
+
+config_project:
+  type: file
+  extention: py
+  contenu:
+    import:
+      [{sqlalchemy: create_engine}, {sqlalchemy.orm: sessionmaker}, {sqlalchemy.orm: load_only}, {sqlalchemy.ext.declarative: declarative_base}, {settings: DATABASE_URI}]
+    simple:
+      engine: create_engine(DATABASE_URI)
+      connection: engine.connect()
+      Session: sessionmaker()
+      simply: Session.configure(bind=engine)
+      session: Session()
+      Base: declarative_base()
+
+
+README:
+  type: file
+  extention: md
+
+requirements:
+  type: file
+  extention: txt
+  contenu:
+    dependances: [pyyaml==3.13, flask==1.0.2, flask-restful==0.3.6, pylint==2.1.1, SQLAlchemy==1.1.15]
+
+controllers:
+  type: directory
+  file:
+    init:
+      extention: py
+      contenu:
+        export:
+          [{articles_controller: ArticlesController}, {users_controller: UsersController}]
+
+    articles_controller:
+      extention: py
+      contenu:
+        import:
+          [{flask_restful: Resource}, {flask_restful: reqparse}, {flask: current_app}, {flask: request}]
+        function:
+         get:
+           attributs: [article_id]
+           docstrings: This is the get method
+         post:
+           attributs: []
+           docstrings: This is the post method
+         update:
+           attributs: [article_id]
+           docstrings: This is the update method
+         delete:
+           attributs: [article_id]
+           docstrings: This is the delete method
+
+    users_controller:
+      extention: py
+      contenu:
+        import:
+          [{flask_restful: Resource}, {flask_restful: reqparse}, {flask: current_app}, {flask: request}]
+        function:
+         get:
+           attributs: [user_id]
+           docstrings: This is the get method
+         post:
+           attributs: []
+           docstrings: This is the post method
+         update:
+           attributs: [user_id]
+           docstrings: This is the update method
+         delete:
+           attributs: [user_id]
+           docstrings: This is the delete method
+
+models:
+  type: directory
+  file:
+    init:
+      extention: py
+      contenu:
+        export:
+          [{users_manager: UsersManager}, {articles_manager: ArticlesManager}]
+
+    users_manager:
+      extention: py
+      contenu:
+        import:
+          [{models: User}]
+        function:
+         get_user_by_id:
+           attributs: [user_id]
+           docstrings: This method is use to get a user by id
+         get_all_users:
+           attributs: []
+           docstrings: This method is use to get all user
+         delete_user:
+           attributs: [user_id]
+           docstrings: This method is use to delete a user with an id
+         update_user:
+           attributs: [user_id, user_email, user_firstname, user_lastname]
+           docstrings: This method is use to update a user with an id
+
+    articles_manager:
+      extention: py
+      contenu:
+        import:
+          [{models: Article}]
+        function:
+         get_article_by_id:
+           attributs: [article_id]
+           docstrings: This method is use to get an article by id
+         get_all_articles:
+           attributs: []
+           docstrings: This method is use to get all articles
+         delete_article:
+           attributs: [article_id]
+           docstrings: This method is use to delete an article with an id
+         update_article:
+           attributs: [article_id, title, text, publish_date, author]
+           docstrings: This method is use to update an article with an id
+
+    models:
+      extention: py
+      contenu:
+        class_list:
+            User:
+              attributs:
+                id:
+                  attr_type: integer
+                  unique: false
+                  nullable: false
+                  pk: true
+                firstname:
+                  attr_type: str30
+                  unique: false
+                  nullable: false
+                lastname:
+                  attr_type: str30
+                  unique: false
+                  nullable: false
+                email:
+                  attr_type: str20
+                  unique: true
+                  nullable: false
+                date:
+                  attr_type: date
+                  unique: true
+                  nullable: false
+              serialize: true
+            Article:
+              attributs:
+                id:
+                  attr_type: integer
+                  unique: false
+                  nullable: false
+                  pk: true
+                title:
+                  attr_type: str30
+                  unique: true
+                  nullable: false
+                text:
+                  attr_type: str200
+                  unique: false
+                  nullable: false
+                author:
+                  attr_type: str30
+                  unique: false
+                  nullable: false
+                publish_date:
+                  attr_type: date
+                  unique: false
+                  nullable: false
+              serialize: true
+
+main:
+  type: file
+  extention: py
+  contenu:
+    import:
+      [{controllers: UsersController}, {controllers: ArticlesController}, {managers: ArticlesManager}, {managers: UsersManager}]
+    routes: [
+      {
+        url: /users,
+        controller: UsersController
+      },
+      {
+        url: /articles,
+        controller: ArticlesController
+      }
+    ]
+    managers: [UsersManager, ArticlesManager]
